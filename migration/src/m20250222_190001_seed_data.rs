@@ -22,7 +22,7 @@ impl MigrationTrait for Migration {
         for (name, price) in bowls {
             bowl::ActiveModel {
                 name: Set(name.into()),
-                price: Set(price.into()),
+                price: Set(price),
                 ..Default::default()
             }
             .insert(db)
@@ -65,7 +65,7 @@ impl MigrationTrait for Migration {
                 customization::ActiveModel {
                     bowl_id: Set(bowl_id),
                     name: Set(name.into()),
-                    price: Set(price.into()),
+                    price: Set(price),
                     ..Default::default()
                 }
                 .insert(db)
