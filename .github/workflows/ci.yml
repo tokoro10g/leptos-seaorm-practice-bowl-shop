@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      SCCACHE_GHA_ENABLED: "true"
+      RUSTC_WRAPPER: sccache
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Start PostgreSQL
+      run: |
+        docker run -d \
+          --name postgres \
+          -e POSTGRES_USER=postgres \
+          -e POSTGRES_PASSWORD=postgres \
+          -e POSTGRES_DB=bowl_shop \
+          -p 5432:5432 \
+          postgres:latest
+        
+        # Wait for PostgreSQL to be ready
+        timeout 30s bash -c 'until docker exec postgres pg_isready; do sleep 1; done'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pkg-config libssl-dev
+
+    - name: Install sccache
+      uses: mozilla-actions/sccache-action@v0.0.7
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: wasm32-unknown-unknown
+        components: rustfmt, clippy
+
+    - name: Rust Cache
+      uses: Swatinem/rust-cache@v2
+
+    - name: Install cargo-binstall
+      run: |
+        curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+
+    - name: Install cargo-leptos and sea-orm-cli
+      run: cargo binstall --no-confirm --force cargo-leptos sea-orm-cli
+
+    - name: Run migrations
+      run: sea-orm-cli migration up
+
+    - name: Check formatting
+      run: cargo fmt --check
+
+    - name: Run clippy
+      run: cargo clippy -- -D warnings
+
+    - name: Build (SSR)
+      run: cargo build --features ssr
+
+    - name: Build (Hydrate)
+      run: cargo leptos build --features hydrate
+
+    - name: Run tests
+      run: |
+        cargo test --features ssr
+        cargo test --features hydrate
