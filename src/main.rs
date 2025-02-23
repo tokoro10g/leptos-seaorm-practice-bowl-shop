@@ -1,12 +1,33 @@
+use migration::{Migrator, MigratorTrait};
 
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
     use axum::Router;
-    use leptos::logging::log;
+    use leptos::logging::{log, warn};
     use leptos::prelude::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use leptos_seaorm_practice_bowl_shop::app::*;
+
+    let env_result = dotenvy::dotenv();
+    if env_result.is_err() {
+        warn!("No .env file found");
+    }
+
+    let connection =
+        sea_orm::Database::connect(std::env::var("DATABASE_URL").unwrap_or_default()).await;
+    match connection {
+        Ok(connection) => {
+            if let Err(e) = Migrator::up(&connection, None).await {
+                warn!("Error migrating database: {:?}", e);
+                return;
+            }
+        }
+        Err(e) => {
+            warn!("Error connecting to database: {:?}", e);
+            return;
+        }
+    };
 
     let conf = get_configuration(None).unwrap();
     let addr = conf.leptos_options.site_addr;
