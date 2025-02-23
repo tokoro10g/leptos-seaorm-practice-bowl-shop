@@ -14,7 +14,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(pk_auto(Bowl::Id))
                     .col(string(Bowl::Name).not_null())
-                    .col(decimal(Bowl::Price).not_null())
+                    .col(float(Bowl::Price).not_null())
                     .to_owned(),
             )
             .await?;
@@ -28,7 +28,7 @@ impl MigrationTrait for Migration {
                     .col(pk_auto(Customization::Id))
                     .col(integer(Customization::BowlId).not_null())
                     .col(string(Customization::Name).not_null())
-                    .col(decimal(Customization::Price).not_null())
+                    .col(float(Customization::Price).not_null())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_customization_bowl")
