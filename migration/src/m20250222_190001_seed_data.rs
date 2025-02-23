@@ -1,6 +1,6 @@
+use entity::*;
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::*;
-use entity::*;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -24,16 +24,18 @@ impl MigrationTrait for Migration {
                 name: Set(name.into()),
                 price: Set(price.into()),
                 ..Default::default()
-            }.insert(db).await?;
+            }
+            .insert(db)
+            .await?;
         }
-        
+
         let results = bowl::Entity::find().all(db).await?;
 
         // Insert customizations for each bowl
         for row in results {
             let bowl_id: i32 = row.id;
             let bowl_name: String = row.name;
-            
+
             // Define customizations based on bowl type
             let customizations = match bowl_name.as_str() {
                 "Teriyaki Chicken Bowl" => vec![
@@ -65,7 +67,9 @@ impl MigrationTrait for Migration {
                     name: Set(name.into()),
                     price: Set(price.into()),
                     ..Default::default()
-                }.insert(db).await?;
+                }
+                .insert(db)
+                .await?;
             }
         }
 
