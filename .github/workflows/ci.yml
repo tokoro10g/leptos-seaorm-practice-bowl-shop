@@ -58,7 +58,7 @@ jobs:
       run: cargo binstall --no-confirm --force cargo-leptos sea-orm-cli
 
     - name: Run migrations
-      run: sea-orm-cli migration up
+      run: sea-orm-cli migrate up
 
     - name: Check formatting
       run: cargo fmt --check
