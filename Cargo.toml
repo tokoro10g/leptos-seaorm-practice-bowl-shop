@@ -3,6 +3,9 @@ edition = "2021"
 name = "leptos-seaorm-practice-bowl-shop"
 version = "0.1.0"
 
+[workspace]
+members = [".", "entity", "migration"]
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 
@@ -10,16 +13,19 @@ crate-type = ["cdylib", "rlib"]
 axum = {version = "0.8", optional = true}
 console_error_panic_hook = {version = "0.1", optional = true}
 dotenvy = "0.15.7"
+entity = {path = "entity"}
 leptos = {version = "0.7"}
 leptos_axum = {version = "0.7", optional = true}
 leptos_meta = {version = "0.7"}
 leptos_router = {version = "0.7"}
-sea-orm = { version = "1.1.5", features = ["sqlx-postgres", "runtime-tokio-native-tls"] }
-sqlx = { version = "0.8.3", features = ["postgres"], optional = true }
+migration = {path = "migration"}
+sea-orm = {version = "1.1.5", features = ["sqlx-postgres", "runtime-tokio-native-tls"]}
+sqlx = {version = "0.8.3", features = ["postgres"], optional = true}
 tokio = {version = "1", features = ["rt-multi-thread"], optional = true}
 wasm-bindgen = {version = "=0.2.100", optional = true}
 
 [features]
+default = ["hydrate", "ssr"]
 hydrate = [
   "leptos/hydrate",
   "dep:console_error_panic_hook",
