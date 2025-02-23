@@ -20,6 +20,7 @@ leptos_meta = {version = "0.7"}
 leptos_router = {version = "0.7"}
 migration = {path = "migration", optional = true}
 sea-orm = {version = "1.1.5", features = ["sqlx-postgres", "runtime-tokio-rustls"], optional = true}
+serde = "1.0.218"
 sqlx = {version = "0.8.3", features = ["postgres", "runtime-tokio-rustls"], optional = true}
 tokio = {version = "1", features = ["rt-multi-thread"], optional = true}
 wasm-bindgen = {version = "=0.2.100", optional = true}
