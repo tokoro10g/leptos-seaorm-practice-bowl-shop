@@ -29,7 +29,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 
 #[component]
 pub fn Navigation(
-    cart_num: impl Fn() -> usize + Send + Sync + 'static,
+    cart_num: impl Fn() -> i32 + Send + Sync + 'static,
     cart_open: RwSignal<bool>,
 ) -> impl IntoView {
     view! {
@@ -119,7 +119,9 @@ pub fn App() -> impl IntoView {
         <Title text="Bowl Shop"/>
 
         <Router>
-            <Navigation cart_open cart_num=move|| cart_items.get().len()/>
+            <Navigation cart_open cart_num=move|| {
+                cart_items.get().iter().map(|item| item.quantity).sum()
+            }/>
             <CartTooltip
                 cart_items=cart_items
                 is_open=cart_open
