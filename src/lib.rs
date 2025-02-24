@@ -1,4 +1,11 @@
 pub mod app;
+pub mod components {
+    pub mod add_to_cart_popup;
+    pub mod cart_item;
+    pub mod cart_tooltip;
+    pub mod menu_item;
+    pub mod menu_list;
+}
 pub mod server;
 
 #[cfg(feature = "ssr")]
