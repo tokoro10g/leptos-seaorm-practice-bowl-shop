@@ -54,11 +54,8 @@ jobs:
       run: |
         curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 
-    - name: Install cargo-leptos and sea-orm-cli
-      run: cargo binstall --no-confirm cargo-leptos sea-orm-cli
-
-    - name: Run migrations
-      run: sea-orm-cli migrate up
+    - name: Install cargo-leptos
+      run: cargo binstall --no-confirm cargo-leptos --version 0.2.28
 
     - name: Check formatting
       run: cargo fmt --check
